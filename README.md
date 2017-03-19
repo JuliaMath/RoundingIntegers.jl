@@ -37,11 +37,6 @@ julia> a
  0x80
 ```
 
-Most operations involving rounding integers promote to regular
-integers. Only a small subset of operations (e.g., bit-shift operations,
-negation, and certain arithmetic involving numbers of all the same
-type) preserve the type of `RInteger`s.
-
 The following types are available:
 - `RInteger` (`RInteger(i)` converts `i` to the corresponding `RInteger` type)
 - `RSigned`, `RUnsigned`
@@ -51,3 +46,8 @@ The following types are available:
 - `RInt64`, `RUInt64`
 - `RInt128`, `RUInt128`
 - `RInt`, `RUInt` (defaults to the platform's WORD_SIZE representation)
+
+Most operations involving rounding integers promote to regular
+integers. Only a small subset of operations (e.g., bit-shift operations,
+negation, and certain arithmetic involving numbers of all the same
+type) preserve the type of `RInteger`s.
