@@ -77,8 +77,8 @@ Base.promote_rule{T<:Real,RI<:RInteger}(::Type{Complex{T}}, ::Type{RI}) =
     promote_type(Complex{T}, itype(RI))
 Base.promote_rule{T<:Integer,RI<:RInteger}(::Type{Rational{T}}, ::Type{RI}) =
     promote_type(Rational{T}, itype(RI))
-Base.promote_rule{s,RI<:RInteger}(::Type{Irrational{s}}, ::Type{RI}) =
-    promote_type(Irrational{S}, itype(RI))
+@compat Base.promote_rule{RI<:RInteger}(::Type{<:Irrational}, ::Type{RI}) =
+    promote_type(Float64, itype(RI))
 
 (::Type{Signed})(x::RSigned) = reinterpret(itype(x), x)
 (::Type{Unsigned})(x::RUnsigned) = reinterpret(itype(x), x)
@@ -90,8 +90,9 @@ Base.promote_rule{s,RI<:RInteger}(::Type{Irrational{s}}, ::Type{RI}) =
 (::Type{RInteger})(x::Unsigned) = RUnsigned(x)
 
 # Basic conversions
-@inline Base.convert{T<:RSigned}(::Type{T}, x::T) = x
-@inline Base.convert{T<:RUnsigned}(::Type{T}, x::T) = x
+# @inline Base.convert{T<:RSigned}(::Type{T}, x::T) = x
+# @inline Base.convert{T<:RUnsigned}(::Type{T}, x::T) = x
+@inline Base.convert{T<:RInteger}(::Type{T}, x::T) = x
 @inline Base.convert{T<:RInteger}(::Type{T}, x::RInteger) =
     RInteger(convert(itype(T), Integer(x)))
 @inline Base.convert{T<:RInteger}(::Type{T}, x::Integer) = RInteger(convert(itype(T), x))
@@ -120,6 +121,7 @@ Base.convert{T<:RInteger}(::Type{T}, x::Float16) = RInteger(convert(itype(T), x)
 Base.convert(::Type{Bool}, x::RInteger) = convert(Bool, Integer(x))
 
 # rem conversions
+@inline Base.rem{T<:RInteger}(x::T, ::Type{T}) = T
 @inline Base.rem{T<:RInteger}(x::Integer, ::Type{T}) = RInteger(rem(x, itype(T)))
 # ambs
 @inline Base.rem{T<:RInteger}(x::BigInt, ::Type{T}) = error("no rounding BigInt available")
@@ -133,6 +135,7 @@ Base.flipsign(x::RSigned, y::RSigned) = RInteger(flipsign(Integer(x), Integer(y)
 Base.count_ones(x::RInteger) = count_ones(Integer(x))
 Base.leading_zeros(x::RInteger) = leading_zeros(Integer(x))
 Base.trailing_zeros(x::RInteger) = trailing_zeros(Integer(x))
+Base.ndigits0z(x::RInteger) = Base.ndigits0z(Integer(x))
 
 # A few operations preserve the type
 -(x::RInteger) = RInteger(-Integer(x))
