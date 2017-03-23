@@ -61,6 +61,8 @@ end
     @test copysign(r, r) === r
     @test unsigned(r) === RUInt(5)
     @test hex(r) == "5"
+
+    @test string(RInt(7.2)) == "7"
 end
 
 @testset "Rounding" begin

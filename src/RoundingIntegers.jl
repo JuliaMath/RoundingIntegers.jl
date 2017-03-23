@@ -135,6 +135,7 @@ Base.flipsign(x::RSigned, y::RSigned) = RInteger(flipsign(Integer(x), Integer(y)
 Base.count_ones(x::RInteger) = count_ones(Integer(x))
 Base.leading_zeros(x::RInteger) = leading_zeros(Integer(x))
 Base.trailing_zeros(x::RInteger) = trailing_zeros(Integer(x))
+Base.ndigits0z(x::RInteger) = Base.ndigits0z(Integer(x))
 
 # A few operations preserve the type
 -(x::RInteger) = RInteger(-Integer(x))
