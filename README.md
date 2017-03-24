@@ -20,6 +20,9 @@ ERROR: InexactError()
 julia> RInt(7.2)    # but not with a rounding integer
 7
 
+julia> (map(RInt, 1.5:1:4.5)...)  # rounds half integers to nearest even 
+(2, 2, 4, 4)
+
 julia> a = Vector{RUInt8}(2)
 2-element Array{RoundingIntegers.RUInt8,1}:
  0x42
