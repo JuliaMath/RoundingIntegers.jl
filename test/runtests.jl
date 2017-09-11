@@ -18,6 +18,8 @@ end
     @test x === 5
     @test isa(convert(RUInt8, 2), RUInt8)
     @test -7 % RUInt8 === RUInt8(0xf9)
+    @test convert(RInteger, 3) === RInt(3)
+    @test convert(RInteger, 0x03) === RUInt8(3)
 
     @test typemin(RInt16) === RInt16(typemin(Int16))
     @test typemin(RInt32) === RInt32(typemin(Int32))

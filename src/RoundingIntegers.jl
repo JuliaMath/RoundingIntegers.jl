@@ -33,6 +33,7 @@ else
     const RUInt = RUInt64
 end
 
+itype(::Type{RInteger}) = Integer
 itype(::Type{RSigned}) = Signed
 itype(::Type{RUnsigned}) = Unsigned
 itype(::Type{RInt8}) = Int8
