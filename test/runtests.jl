@@ -1,4 +1,4 @@
-using Compat, Base.Test
+using Compat, Test
 ambs0 = detect_ambiguities(Base, Core, Compat)
 using RoundingIntegers
 ambs1 = detect_ambiguities(Base, Core, Compat, RoundingIntegers)

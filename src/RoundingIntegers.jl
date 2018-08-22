@@ -1,5 +1,3 @@
-__precompile__(true)
-
 module RoundingIntegers
 
 using Compat
@@ -98,7 +96,7 @@ RInteger(x::Unsigned) = RUnsigned(x)
     RInteger(convert(itype(T), Integer(x)))
 @inline Base.convert(::Type{T}, x::Integer) where {T<:RInteger} = RInteger(convert(itype(T), x))
 @inline Base.convert(::Type{T}, x::AbstractFloat) where {T<:RInteger} =
-    RInteger(round(itype(T), x))
+    RInteger(round(itype(T), digits=x))
 @inline Base.convert(::Type{T}, x::Number) where {T<:RInteger} =
     convert(T, convert(itype(T), x))
 
