@@ -1,13 +1,8 @@
 using Compat, Base.Test
-if VERSION < v"0.6.0-pre.alpha.229"
-    using RoundingIntegers
-    @test isempty(detect_ambiguities(Base, Core, RoundingIntegers))
-else
-    ambs0 = detect_ambiguities(Base, Core, Compat)
-    using RoundingIntegers
-    ambs1 = detect_ambiguities(Base, Core, Compat, RoundingIntegers)
-    @test isempty(setdiff(ambs1, ambs0))
-end
+ambs0 = detect_ambiguities(Base, Core, Compat)
+using RoundingIntegers
+ambs1 = detect_ambiguities(Base, Core, Compat, RoundingIntegers)
+@test isempty(setdiff(ambs1, ambs0))
 
 @testset "Basics" begin
     r16 = RInt16(3)

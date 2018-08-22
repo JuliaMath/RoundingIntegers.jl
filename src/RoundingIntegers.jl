@@ -9,21 +9,21 @@ export RSigned, RUnsigned, RInteger
 export RInt8, RUInt8, RInt16, RUInt16, RInt32, RUInt32, RInt64, RUInt64,
        RInt128, RUInt128, RInt, RUInt
 
-@compat abstract type RSigned   <: Signed end
-@compat abstract type RUnsigned <: Unsigned end
+abstract type RSigned   <: Signed end
+abstract type RUnsigned <: Unsigned end
 
 const RInteger = Union{RSigned,RUnsigned}
 
-@compat primitive type RInt8 <: RSigned 8 end
-@compat primitive type RUInt8 <: RUnsigned 8 end
-@compat primitive type RInt16 <: RSigned 16 end
-@compat primitive type RUInt16 <: RUnsigned 16 end
-@compat primitive type RInt32 <: RSigned 32 end
-@compat primitive type RUInt32 <: RUnsigned 32 end
-@compat primitive type RInt64 <: RSigned 64 end
-@compat primitive type RUInt64 <: RUnsigned 64 end
-@compat primitive type RInt128 <: RSigned 128 end
-@compat primitive type RUInt128 <: RUnsigned 128 end
+primitive type RInt8 <: RSigned 8 end
+primitive type RUInt8 <: RUnsigned 8 end
+primitive type RInt16 <: RSigned 16 end
+primitive type RUInt16 <: RUnsigned 16 end
+primitive type RInt32 <: RSigned 32 end
+primitive type RUInt32 <: RUnsigned 32 end
+primitive type RInt64 <: RSigned 64 end
+primitive type RUInt64 <: RUnsigned 64 end
+primitive type RInt128 <: RSigned 128 end
+primitive type RUInt128 <: RUnsigned 128 end
 
 if Sys.WORD_SIZE == 32
     const RInt = RInt32
@@ -65,67 +65,67 @@ rtype(x::Union{Signed,Unsigned}) = rtype(typeof(x))
 # RIntegers are largely about assignment; for usage, we convert to
 # standard integers at the drop of a hat.
 
-Base.promote_rule{T<:Number,RI<:RInteger}(::Type{T}, ::Type{RI}) =
+Base.promote_rule(::Type{T}, ::Type{RI}) where {T<:Number,RI<:RInteger} =
     promote_type(T, itype(RI))
 # Resolve ambiguities
-Base.promote_rule{RI<:RInteger}(::Type{Bool}, ::Type{RI}) =
+Base.promote_rule(::Type{Bool}, ::Type{RI}) where {RI<:RInteger} =
     promote_type(Bool, itype(RI))
-Base.promote_rule{RI<:RInteger}(::Type{BigInt}, ::Type{RI}) =
+Base.promote_rule(::Type{BigInt}, ::Type{RI}) where {RI<:RInteger} =
     promote_type(BigInt, itype(RI))
-Base.promote_rule{RI<:RInteger}(::Type{BigFloat}, ::Type{RI}) =
+Base.promote_rule(::Type{BigFloat}, ::Type{RI}) where {RI<:RInteger} =
     promote_type(BigFloat, itype(RI))
-Base.promote_rule{T<:Real,RI<:RInteger}(::Type{Complex{T}}, ::Type{RI}) =
+Base.promote_rule(::Type{Complex{T}}, ::Type{RI}) where {T<:Real,RI<:RInteger} =
     promote_type(Complex{T}, itype(RI))
-Base.promote_rule{T<:Integer,RI<:RInteger}(::Type{Rational{T}}, ::Type{RI}) =
+Base.promote_rule(::Type{Rational{T}}, ::Type{RI}) where {T<:Integer,RI<:RInteger} =
     promote_type(Rational{T}, itype(RI))
-@compat Base.promote_rule{RI<:RInteger}(::Type{<:Irrational}, ::Type{RI}) =
+Base.promote_rule(::Type{<:Irrational}, ::Type{RI}) where {RI<:RInteger} =
     promote_type(Float64, itype(RI))
 
-(::Type{Signed})(x::RSigned) = reinterpret(itype(x), x)
-(::Type{Unsigned})(x::RUnsigned) = reinterpret(itype(x), x)
-(::Type{RSigned})(x::Signed) = reinterpret(rtype(x), x)
-(::Type{RUnsigned})(x::Unsigned) = reinterpret(rtype(x), x)
-(::Type{Integer})(x::RSigned) = Signed(x)
-(::Type{Integer})(x::RUnsigned) = Unsigned(x)
-(::Type{RInteger})(x::Signed) = RSigned(x)
-(::Type{RInteger})(x::Unsigned) = RUnsigned(x)
+Signed(x::RSigned) = reinterpret(itype(x), x)
+Unsigned(x::RUnsigned) = reinterpret(itype(x), x)
+RSigned(x::Signed) = reinterpret(rtype(x), x)
+RUnsigned(x::Unsigned) = reinterpret(rtype(x), x)
+Integer(x::RSigned) = Signed(x)
+Integer(x::RUnsigned) = Unsigned(x)
+RInteger(x::Signed) = RSigned(x)
+RInteger(x::Unsigned) = RUnsigned(x)
 
 # Basic conversions
 # @inline Base.convert{T<:RSigned}(::Type{T}, x::T) = x
 # @inline Base.convert{T<:RUnsigned}(::Type{T}, x::T) = x
-@inline Base.convert{T<:RInteger}(::Type{T}, x::T) = x
-@inline Base.convert{T<:RInteger}(::Type{T}, x::RInteger) =
+@inline Base.convert(::Type{T}, x::T) where {T<:RInteger} = x
+@inline Base.convert(::Type{T}, x::RInteger) where {T<:RInteger} =
     RInteger(convert(itype(T), Integer(x)))
-@inline Base.convert{T<:RInteger}(::Type{T}, x::Integer) = RInteger(convert(itype(T), x))
-@inline Base.convert{T<:RInteger}(::Type{T}, x::AbstractFloat) =
+@inline Base.convert(::Type{T}, x::Integer) where {T<:RInteger} = RInteger(convert(itype(T), x))
+@inline Base.convert(::Type{T}, x::AbstractFloat) where {T<:RInteger} =
     RInteger(round(itype(T), x))
-@inline Base.convert{T<:RInteger}(::Type{T}, x::Number) =
+@inline Base.convert(::Type{T}, x::Number) where {T<:RInteger} =
     convert(T, convert(itype(T), x))
 
-@inline Base.convert{T<:Number}(::Type{T}, x::RInteger) = convert(T, Integer(x))
+@inline Base.convert(::Type{T}, x::RInteger) where {T<:Number} = convert(T, Integer(x))
 
 # Resolve ambiguities
 Base.convert(::Type{Integer}, x::RInteger) = Integer(x)
 Base.convert(::Type{BigInt}, x::RInteger) = convert(BigInt, Integer(x))
-Base.convert{T<:RInteger}(::Type{T}, x::BigInt) = RInteger(convert(itype(T), x))
+Base.convert(::Type{T}, x::BigInt) where {T<:RInteger} = RInteger(convert(itype(T), x))
 Base.convert(::Type{BigFloat}, x::RInteger) = convert(BigFloat, Integer(x))
-Base.convert{T<:RInteger}(::Type{T}, x::BigFloat) = RInteger(convert(itype(T), x))
-Base.convert{T<:Real}(::Type{Complex{T}}, x::RInteger) = convert(Complex{T}, Integer(x))
-Base.convert{T<:RInteger}(::Type{T}, z::Complex) = RInteger(convert(itype(T), z))
+Base.convert(::Type{T}, x::BigFloat) where {T<:RInteger} = RInteger(convert(itype(T), x))
+Base.convert(::Type{Complex{T}}, x::RInteger) where {T<:Real} = convert(Complex{T}, Integer(x))
+Base.convert(::Type{T}, z::Complex) where {T<:RInteger} = RInteger(convert(itype(T), z))
 Base.convert(::Type{Complex}, x::RInteger) = Complex(x)
-Base.convert{T<:RInteger}(::Type{T}, x::Rational) = RInteger(convert(itype(T)), x)
-Base.convert{T<:Integer}(::Type{Rational{T}}, x::RInteger) =
+Base.convert(::Type{T}, x::Rational) where {T<:RInteger} = RInteger(convert(itype(T)), x)
+Base.convert(::Type{Rational{T}}, x::RInteger) where {T<:Integer} =
     convert(Rational{T}, Integer(x))
 Base.convert(::Type{Rational}, x::RInteger) = convert(Rational{typeof(x)}, x)
 Base.convert(::Type{Float16}, x::RInteger) = convert(Float16, Integer(x))
-Base.convert{T<:RInteger}(::Type{T}, x::Float16) = RInteger(convert(itype(T), x))
+Base.convert(::Type{T}, x::Float16) where {T<:RInteger} = RInteger(convert(itype(T), x))
 Base.convert(::Type{Bool}, x::RInteger) = convert(Bool, Integer(x))
 
 # rem conversions
-@inline Base.rem{T<:RInteger}(x::T, ::Type{T}) = T
-@inline Base.rem{T<:RInteger}(x::Integer, ::Type{T}) = RInteger(rem(x, itype(T)))
+@inline Base.rem(x::T, ::Type{T}) where {T<:RInteger} = T
+@inline Base.rem(x::Integer, ::Type{T}) where {T<:RInteger} = RInteger(rem(x, itype(T)))
 # ambs
-@inline Base.rem{T<:RInteger}(x::BigInt, ::Type{T}) = error("no rounding BigInt available")
+@inline Base.rem(x::BigInt, ::Type{T}) where {T<:RInteger} = error("no rounding BigInt available")
 
 
 Base.flipsign(x::RSigned, y::RSigned) = RInteger(flipsign(Integer(x), Integer(y)))
@@ -153,23 +153,23 @@ Base.ndigits0z(x::RInteger) = Base.ndigits0z(Integer(x))
 >>>(x::RInteger, y::Int) = RInteger(Integer(x) >>> y)
 <<(x::RInteger, y::Int) = RInteger(Integer(x) << y)
 
-+{T<:RInteger}(x::T, y::T) = RInteger(Integer(x) + Integer(y))
--{T<:RInteger}(x::T, y::T) = RInteger(Integer(x) - Integer(y))
-*{T<:RInteger}(x::T, y::T) = RInteger(Integer(x) * Integer(y))
-(&){T<:RInteger}(x::T, y::T) = RInteger(Integer(x) & Integer(y))
-(|){T<:RInteger}(x::T, y::T) = RInteger(Integer(x) | Integer(y))
++(x::T, y::T) where {T<:RInteger} = RInteger(Integer(x) + Integer(y))
+-(x::T, y::T) where {T<:RInteger} = RInteger(Integer(x) - Integer(y))
+*(x::T, y::T) where {T<:RInteger} = RInteger(Integer(x) * Integer(y))
+(&)(x::T, y::T) where {T<:RInteger} = RInteger(Integer(x) & Integer(y))
+(|)(x::T, y::T) where {T<:RInteger} = RInteger(Integer(x) | Integer(y))
 # ($){T<:RInteger}(x::T, y::T) = RInteger(Integer(x) $ Integer(y))
-Compat.xor{T<:RInteger}(x::T, y::T) = RInteger(xor(Integer(x), Integer(y)))
+Compat.xor(x::T, y::T) where {T<:RInteger} = RInteger(xor(Integer(x), Integer(y)))
 
-Base.rem{T<:RInteger}(x::T, y::T) = RInteger(rem(Integer(x), Integer(y)))
-Base.mod{T<:RInteger}(x::T, y::T) = RInteger(mod(Integer(x), Integer(y)))
+Base.rem(x::T, y::T) where {T<:RInteger} = RInteger(rem(Integer(x), Integer(y)))
+Base.mod(x::T, y::T) where {T<:RInteger} = RInteger(mod(Integer(x), Integer(y)))
 
 Base.unsigned(x::RSigned) = RInteger(unsigned(Integer(x)))
 Base.signed(x::RSigned)   = RInteger(signed(Integer(x)))
 
 # traits
-Base.typemin{T<:RInteger}(::Type{T}) = RInteger(typemin(itype(T)))
-Base.typemax{T<:RInteger}(::Type{T}) = RInteger(typemax(itype(T)))
-Base.widen{T<:RInteger}(::Type{T}) = rtype(widen(itype(T)))
+Base.typemin(::Type{T}) where {T<:RInteger} = RInteger(typemin(itype(T)))
+Base.typemax(::Type{T}) where {T<:RInteger} = RInteger(typemax(itype(T)))
+Base.widen(::Type{T}) where {T<:RInteger} = rtype(widen(itype(T)))
 
 end # module
