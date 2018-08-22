@@ -1,8 +1,6 @@
-using Compat, Test
-ambs0 = detect_ambiguities(Base, Core, Compat)
+using Test
 using RoundingIntegers
-ambs1 = detect_ambiguities(Base, Core, Compat, RoundingIntegers)
-@test isempty(setdiff(ambs1, ambs0))
+@test isempty(detect_ambiguities(Base, Core, RoundingIntegers))
 
 @testset "Basics" begin
     r16 = RInt16(3)
@@ -57,7 +55,7 @@ ambs1 = detect_ambiguities(Base, Core, Compat, RoundingIntegers)
     @test !signbit(r)
     @test copysign(r, r) === r
     @test unsigned(r) === RUInt(5)
-    @test hex(r) == "5"
+    @test string(r, base=16) == "5"
 
     @test string(RInt(7.2)) == "7"
 end
