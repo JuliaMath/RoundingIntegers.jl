@@ -88,11 +88,11 @@ RInt128(x::Int128) = reinterpret(RInt128, x)
 RUInt128(x::UInt128) = reinterpret(RUInt128, x)
 
 (::Type{R})(x::Integer) where R<:RInteger = R(convert(itype(R), x))
-(::Type{R})(x::Float16) where R<:RInteger = R(round(itype(R), x))
-(::Type{R})(x::BigFloat) where R<:RInteger = R(round(itype(R), x))
-(::Type{R})(x::Rational) where R<:RInteger = R(round(itype(R), x))
-(::Type{R})(x::Complex) where R<:RInteger = R(round(itype(R), x))
-(::Type{R})(x::AbstractFloat) where R<:RInteger = R(round(itype(R), x))
+(::Type{R})(x::Float16) where R<:RInteger = R(round(itype(R), digits=x))
+(::Type{R})(x::BigFloat) where R<:RInteger = R(round(itype(R), digits=x))
+(::Type{R})(x::Rational) where R<:RInteger = R(round(itype(R), digits=x))
+(::Type{R})(x::Complex) where R<:RInteger = R(round(itype(R), digits=x))
+(::Type{R})(x::AbstractFloat) where R<:RInteger = R(round(itype(R), digits=x))
 
 @inline Base.convert(::Type{T}, x::RInteger) where {T<:Number} = convert(T, Integer(x))
 
