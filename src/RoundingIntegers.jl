@@ -139,6 +139,18 @@ xor(x::T, y::T) where {T<:RInteger} = RInteger(xor(Integer(x), Integer(y)))
 
 Base.rem(x::T, y::T) where {T<:RInteger} = RInteger(rem(Integer(x), Integer(y)))
 Base.mod(x::T, y::T) where {T<:RInteger} = RInteger(mod(Integer(x), Integer(y)))
+if hasmethod(div, (Int, Int, RoundingMode))
+    for R ∈ (RoundingMode{:ToZero},
+             RoundingMode{:Up},
+             RoundingMode{:Down},
+             Union{RoundingMode{:Nearest}, RoundingMode{:NearestTiesAway}, RoundingMode{:NearestTiesUp}},
+            )
+        @eval Base.div(x::T, y::T, rmode::$R) where {T<:RInteger} = RInteger(div(Integer(x), Integer(y), rmode))
+    end
+else
+    Base.fld(x::T, y::T) where {T<:RInteger} = RInteger(fld(Integer(x), Integer(y)))
+    Base.cld(x::T, y::T) where {T<:RInteger} = RInteger(cld(Integer(x), Integer(y)))
+end
 
 Base.unsigned(x::RSigned) = RInteger(unsigned(Integer(x)))
 Base.signed(x::RSigned)   = RInteger(signed(Integer(x)))
