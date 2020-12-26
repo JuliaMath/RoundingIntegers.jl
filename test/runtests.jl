@@ -45,10 +45,12 @@ using RoundingIntegers
     @test r & r === r
     @test r | r === r
     @test r ÷ r === RInt(1)
+    @test r ÷ 5 === 1
     @test r % r === RInt(0)
+    @test r % 5 === 0
 
-    @test fld(r, r) === 1
-    @test cld(r, r) === 1
+    @test fld(r, r) === RInt(1)
+    @test cld(r, r) === RInt(1)
 
     @test isodd(r)
     @test !iseven(r16)
