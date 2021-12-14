@@ -1,6 +1,6 @@
 name = "RoundingIntegers"
 uuid = "d5f540fe-1c90-5db3-b776-2e2f362d9394"
-version = "1.0.1"
+version = "1.1.0"
 
 [compat]
 julia = "0.7, 1"
