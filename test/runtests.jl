@@ -1,6 +1,6 @@
 using Test
 using RoundingIntegers
-@test isempty(detect_ambiguities(Base, Core, RoundingIntegers))
+@test isempty(detect_ambiguities(RoundingIntegers))
 
 @testset "Basics" begin
     r16 = RInt16(3)
@@ -17,6 +17,10 @@ using RoundingIntegers
     @test typemin(RInt16) === RInt16(typemin(Int16))
     @test typemin(RInt32) === RInt32(typemin(Int32))
     @test widen(r16) === convert(RInt32, r16)
+
+    @test RInt16(r16) === r16
+    @test float(r16) === Float64(r16) === 3.0
+    @test convert(Float32, r) === 5.0f0
 
     @test !(r < r)
     @test r <= r
