@@ -67,10 +67,14 @@ Base.promote_rule(::Type{RI}, ::Type{T}) where {T<:Number,RI<:RInteger} =
 
 Base.Signed(x::RSigned) = reinterpret(itype(x), x)
 Base.Unsigned(x::RUnsigned) = reinterpret(itype(x), x)
+RSigned(x::RSigned) = x
 RSigned(x::Signed) = reinterpret(rtype(x), x)
+RUnsigned(x::RUnsigned) = x
 RUnsigned(x::Unsigned) = reinterpret(rtype(x), x)
 Base.Integer(x::RSigned) = Signed(x)
 Base.Integer(x::RUnsigned) = Unsigned(x)
+Base.Integer(x::RInteger) = reinterpret(itype(x), x)
+RInteger(x::RInteger) = x
 RInteger(x::Signed) = RSigned(x)
 RInteger(x::Unsigned) = RUnsigned(x)
 
@@ -94,13 +98,24 @@ RUInt128(x::UInt128) = reinterpret(RUInt128, x)
 (::Type{R})(x::Complex) where R<:RInteger = R(round(itype(R), x))
 (::Type{R})(x::AbstractFloat) where R<:RInteger = R(round(itype(R), x))
 
-@inline Base.convert(::Type{T}, x::RInteger) where {T<:Number} = convert(T, Integer(x))
+# Ambiguity resolution
+(::Type{T})(x::RInteger) where {T<:RInteger} = convert(T, x)
+Base.Bool(x::RInteger) = Bool(Integer(x))
+Base.Rational(x::RInteger) = Rational(Integer(x))
+Base.Rational{T}(x::RInteger) where {T<:Integer} = Rational(Integer(x))
+Base.BigInt(x::RInteger) = BigInt(Integer(x))
+Base.Float16(x::RInteger) = Float16(Integer(x))
+Base.BigFloat(x::RInteger; kwargs...) = BigFloat(Integer(x); kwargs...)
+
+(::Type{T})(x::RInteger) where {T<:Real} = convert(T, Integer(x))
+Base.convert(::Type{T}, x::T) where {T<:RInteger} = x
+Base.convert(::Type{T}, x::RInteger) where {T<:RInteger} = T(convert(itype(T), Integer(x)))
 
 # rem conversions
-@inline Base.rem(x::T, ::Type{T}) where {T<:RInteger} = T
-@inline Base.rem(x::Integer, ::Type{T}) where {T<:RInteger} = RInteger(rem(x, itype(T)))
+Base.rem(x::T, ::Type{T}) where {T<:RInteger} = T
+Base.rem(x::Integer, ::Type{T}) where {T<:RInteger} = RInteger(rem(x, itype(T)))
 # ambs
-@inline Base.rem(x::BigInt, ::Type{T}) where {T<:RInteger} = error("no rounding BigInt available")
+Base.rem(x::BigInt, ::Type{T}) where {T<:RInteger} = error("no rounding BigInt available")
 
 
 Base.flipsign(x::RSigned, y::RSigned) = RInteger(flipsign(Integer(x), Integer(y)))
