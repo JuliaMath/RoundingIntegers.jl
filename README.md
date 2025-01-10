@@ -1,8 +1,7 @@
 # RoundingIntegers
 
-[![Build Status](https://travis-ci.org/JuliaMath/RoundingIntegers.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/RoundingIntegers.jl)
-
-[![codecov.io](http://codecov.io/github/JuliaMath/RoundingIntegers.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaMath/RoundingIntegers.jl?branch=master)
+[![Build Status](https://github.com/JuliaMath/RoundingIntegers.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuliaMath/RoundingIntegers.jl/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/github/JuliaMath/RoundingIntegers.jl/graph/badge.svg?token=f40o3BvQzF)](https://codecov.io/github/JuliaMath/RoundingIntegers.jl)
 
 RoundingIntegers defines new integer types for the Julia programming
 language. Rounding integers act very much like regular integers,
